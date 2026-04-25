@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CarritoWeb - Pedido</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header id="cabecera"></header>
+
+  <script>
+    fetch('marco.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('cabecera').innerHTML = data;
+      });
+  </script>
+
+  <main class="contenedor">
+    <section>
+      <h2>Formulario de pedido</h2>
+      <p>
+        Completa este formulario para simular la compra de productos de la tienda.
+      </p>
+      <p id="mensaje-pedido"></p>
+    </section>
+
+    <section class="destacado">
+      <h2>Resumen antes de pagar</h2>
+      <div id="resumen-pedido"></div>
+    </section>
+
+    <section>
+      <form id="form-pedido">
+        <fieldset>
+          <legend>Datos personales</legend>
+
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" required>
+
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" required>
+
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" name="correo" required>
+        </fieldset>
+
+        <fieldset>
+          <legend>Tarjeta de Crédito/Débito</legend>
+
+          <label for="numero">Número de tarjeta</label>
+          <input
+            type="text"
+            id="numero"
+            name="numero"
+            minlength="16"
+            maxlength="16"
+            pattern="\d{16}"
+            inputmode="numeric"
+            required
+          >
+
+          <label for="fechaCaducidad">Fecha de caducidad</label>
+          <input type="date" id="fechaCaducidad" name="fechaCaducidad" required>
+
+          <label for="cvv">CVV</label>
+          <input
+            type="text"
+            id="cvv"
+            name="cvv"
+            minlength="3"
+            maxlength="3"
+            pattern="\d{3}"
+            inputmode="numeric"
+            required
+          >
+        </fieldset>
+
+        <fieldset>
+          <legend>Entrega</legend>
+
+          <label for="fechaEntrega">Fecha de entrega</label>
+          <input type="date" id="fechaEntrega" name="fechaEntrega" required>
+
+          <label for="instrucciones">Instrucciones</label>
+          <textarea id="instrucciones" name="instrucciones" rows="4"></textarea>
+        </fieldset>
+
+        <fieldset>
+          <input type="submit" value="Enviar">
+          <input type="reset" value="Resetear">
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+  <script>
+    async function cargarResumenPedido() {
+      const resumen = document.getElementById("resumen-pedido");
+      const carrito = await obtenerCarritoActual();
+
+      if (!carrito || carrito.lineas.length === 0) {
+        resumen.innerHTML = "<p>No hay productos en el carrito.</p>";
+        return;
+      }
+
+      let html = "<ul>";
+
+      carrito.lineas.forEach(linea => {
+        const producto = PRODUCTOS[linea.idArticulo];
+        const nombre = producto ? producto.nombre : `Artículo ${linea.idArticulo}`;
+
+        html += `<li>${nombre} - ${linea.unidades} unidad(es) - ${formatearPrecio(linea.costeLineaArticulo)}</li>`;
+      });
+
+      html += `</ul><p><strong>Total: ${formatearPrecio(carrito.totalPrecio)}</strong></p>`;
+      resumen.innerHTML = html;
+    }
+
+    document.getElementById("form-pedido").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const mensaje = document.getElementById("mensaje-pedido");
+      const carrito = await obtenerCarritoActual();
+
+      if (!carrito || carrito.lineas.length === 0) {
+        mensaje.textContent = "No puedes realizar el pedido porque el carrito está vacío.";
+        return;
+      }
+
+      if (!this.checkValidity()) {
+        this.reportValidity();
+        return;
+      }
+
+      try {
+        await vaciarCarrito();
+        mensaje.textContent = "Pedido realizado correctamente. El carrito se ha vaciado.";
+        this.reset();
+        document.getElementById("resumen-pedido").innerHTML = "<p>Pedido finalizado.</p>";
+      } catch (error) {
+        mensaje.textContent = "Error al procesar el pedido: " + error.message;
+      }
+    });
+
+    cargarResumenPedido();
+  </script>
+</body>
+</html>

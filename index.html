@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>CarritoWeb - Inicio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header id="cabecera">  </header>
+    <script>
+    fetch('marco.html')
+    .then(res => res.text())
+    .then(data => {
+    document.getElementById('cabecera').innerHTML =data;
+    });
+    </script>
+
+
+  <main class="contenedor">
+    <section>
+      <h2>Bienvenido</h2>
+      <p>
+        Esta web representa el frontend de una tienda online inspirada en un sistema
+        de carrito de compra, se ha decido realizar con productos tecnológicos. 
+      </p>
+      
+      <img src="https://cdn-icons-png.flaticon.com/512/2611/2611181.png" alt="Tienda online">
+    </section>
+
+    <section class="destacado">
+      <h2>Contenido de la práctica</h2>
+      <ul>
+        <li>Página principal de presentación.</li>
+        <li>Página de catálogo de productos.</li>
+        <li>Página con el resumen del carrito.</li>
+        <li>Página con formulario de pedido.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Vídeo de ejemplo</h2>
+      <p>Ejemplo de contenido multimedia.</p>
+      <iframe width="550" height="315" src="videos/video1.mp4" title="Vídeo de ejemplo"></iframe>
+    </section>
+
+    <section>
+      <h2>Opinión de clientes</h2>
+      <blockquote>
+        Una tienda sencilla, para practicar HTML y CSS.
+      </blockquote>
+    </section>
+  </main>
+
+</body>
+</html>
